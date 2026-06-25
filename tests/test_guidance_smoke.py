@@ -77,7 +77,7 @@ def test_bbb_guidance_valid_path_applies_force(monkeypatch) -> None:
     module = _build_guidance_module()
     captured = {}
 
-    fake_struct_guidance = types.ModuleType("bbb_geo.infer.struct_guidance")
+    fake_guidance = types.ModuleType("bbb_geo.guidance")
 
     class BBBGuidanceConfig:
         def __init__(self, **kwargs):
@@ -88,20 +88,11 @@ def test_bbb_guidance_valid_path_applies_force(monkeypatch) -> None:
         captured["cfg"] = cfg
         return torch.ones_like(atom_coords)
 
-    fake_struct_guidance.BBBGuidanceConfig = BBBGuidanceConfig
-    fake_struct_guidance.compute_bbb_guidance_force = compute_bbb_guidance_force
+    fake_guidance.BBBGuidanceConfig = BBBGuidanceConfig
+    fake_guidance.compute_bbb_guidance_force = compute_bbb_guidance_force
 
-    monkeypatch.setitem(
-        __import__("sys").modules, "bbb_geo", types.ModuleType("bbb_geo")
-    )
-    monkeypatch.setitem(
-        __import__("sys").modules, "bbb_geo.infer", types.ModuleType("bbb_geo.infer")
-    )
-    monkeypatch.setitem(
-        __import__("sys").modules,
-        "bbb_geo.infer.struct_guidance",
-        fake_struct_guidance,
-    )
+    monkeypatch.setitem(__import__("sys").modules, "bbb_geo", types.ModuleType("bbb_geo"))
+    monkeypatch.setitem(__import__("sys").modules, "bbb_geo.guidance", fake_guidance)
 
     atom_coords = torch.randn(1, 8, 3)
     out = module._compute_bbb_guidance(

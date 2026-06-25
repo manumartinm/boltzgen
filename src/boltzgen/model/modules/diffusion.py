@@ -511,7 +511,7 @@ class AtomDiffusion(Module):
             )
             return None
         try:
-            from bbb_geo.infer.struct_guidance import BBBGuidanceConfig, compute_bbb_guidance_force
+            from bbb_geo.guidance import BBBGuidanceConfig, compute_bbb_guidance_force
         except ImportError:
             self._log_guidance_once(
                 "bbb_import_error",
